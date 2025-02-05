@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  name     String
+  correo   String   @unique
+  password String
+  alias    String
+  Inventory Inventory[]
+}
+
+model Inventory {
+  id      Int  @id @default(autoincrement())
+  user    User @relation(fields: [userId], references: [id])
+  lib     Lib  @relation(fields: [libID], references: [id])
+  libID   Int
+  name    String
+  userId  Int
+}
+
+model Lib {
+  id          Int           @id @default(autoincrement())
+  title       String        @unique
+  descripcion String
+  category    Category      @relation(fields: [categoryId], references: [id])
+  categoryId  Int
+
+  Inventory    Inventory[]
+  LibCategory  LibCategory[]
+  LikeLib      LikeLib[]
+  RankingLib   RankingLib[]
+
+  @@map("lib")
+}
+
+model LikeLib {
+  id    Int  @id @default(autoincrement())
+  lib   Lib  @relation(fields: [libID], references: [id])
+  libID Int
+}
+
+model LibCategory {
+  id         Int      @id @default(autoincrement())
+  lib        Lib      @relation(fields: [libId], references: [id])
+  libId      Int
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+}
+
+model Category {
+  id         Int          @id @default(autoincrement())
+  name       String
+  LibCategory LibCategory[]
+
+  @@map("categories")
+  Lib Lib[]
+}
+
+model RankingLib {
+  id      Int  @id @default(autoincrement())
+  lib     Lib  @relation(fields: [libID], references: [id])
+  libID   Int
+  ranking Int  @default(0) // Puedes agregar validaciones adicionales si lo deseas
+}
