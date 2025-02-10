@@ -4,6 +4,9 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,64 +17,90 @@ datasource db {
 }
 
 model User {
-  id       Int      @id @default(autoincrement())
-  name     String
-  correo   String   @unique
-  password String
-  alias    String
-  Inventory Inventory[]
+  id         Int         @id @default(autoincrement())
+  name       String
+  correo     String      @unique
+  password   String
+  alias      String
+
+  role       Role
+  inventory  Inventory[]
+  publications Publication[]
+  comments   Comment[]
+  likes      LikeLib[]
+}
+
+
+enum Role {
+  ADMIN
+  USER
 }
 
 model Inventory {
   id      Int  @id @default(autoincrement())
   user    User @relation(fields: [userId], references: [id])
-  lib     Lib  @relation(fields: [libID], references: [id])
-  libID   Int
-  name    String
   userId  Int
+  lib     Book  @relation(fields: [libId], references: [id])
+  libId   Int
 }
 
-model Lib {
-  id          Int           @id @default(autoincrement())
-  title       String        @unique
+model Book {
+  id          Int          @id @default(autoincrement())
+  title       String       @unique
   descripcion String
-  category    Category      @relation(fields: [categoryId], references: [id])
-  categoryId  Int
 
-  Inventory    Inventory[]
-  LibCategory  LibCategory[]
-  LikeLib      LikeLib[]
-  RankingLib   RankingLib[]
-
-  @@map("lib")
+  inventory   Inventory[]
+  libCategories LibCategory[]
+  likes       LikeLib[]
+  rankings    RankingLib[]
+	@@map("Lib")
 }
 
 model LikeLib {
-  id    Int  @id @default(autoincrement())
-  lib   Lib  @relation(fields: [libID], references: [id])
-  libID Int
+  user    User @relation(fields: [userId], references: [id])
+  userId  Int
+  lib     Book  @relation(fields: [libId], references: [id])
+  libId   Int
+
+  @@unique([userId, libId]) // Evita que un usuario pueda dar "me gusta" dos veces al mismo libro
 }
 
 model LibCategory {
   id         Int      @id @default(autoincrement())
-  lib        Lib      @relation(fields: [libId], references: [id])
+  lib        Book      @relation(fields: [libId], references: [id])
   libId      Int
   category   Category @relation(fields: [categoryId], references: [id])
   categoryId Int
 }
 
 model Category {
-  id         Int          @id @default(autoincrement())
-  name       String
-  LibCategory LibCategory[]
+  id           Int          @id @default(autoincrement())
+  name         String       @unique
+  libCategories LibCategory[]
 
-  @@map("categories")
-  Lib Lib[]
 }
 
 model RankingLib {
   id      Int  @id @default(autoincrement())
-  lib     Lib  @relation(fields: [libID], references: [id])
-  libID   Int
-  ranking Int  @default(0) // Puedes agregar validaciones adicionales si lo deseas
+  lib     Book  @relation(fields: [libId], references: [id])
+  libId   Int
+  ranking Int  @default(0) // Se puede agregar validación para que no sea negativo
+}
+
+model Publication {
+  id       Int      @id @default(autoincrement())
+  title    String
+  content  String
+  user     User     @relation(fields: [userId], references: [id])
+  userId   Int
+  comments Comment[]
+}
+
+model Comment {
+  id            Int         @id @default(autoincrement())
+  content       String
+  user         User        @relation(fields: [userId], references: [id])
+  userId       Int
+  publication  Publication @relation(fields: [publicationId], references: [id])
+  publicationId Int
 }

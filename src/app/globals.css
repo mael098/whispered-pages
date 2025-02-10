@@ -2,8 +2,10 @@
 @import '@radix-ui/themes/styles.css';
 
 @theme {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--daintree-50);
+  --color-foreground: var(--daintree-950);
+  --color-navbar: var(--daintree-900)
+  --text-color: var(--daintree-950);
 }
 
 /*
@@ -25,14 +27,36 @@
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --daintree-50: #ecfeff;
+--daintree-100: #cff9fe;
+--daintree-200: #a4f2fd;
+--daintree-300: #66e6fa;
+--daintree-400: #20d0f0;
+--daintree-500: #04b3d6;
+--daintree-600: #068fb4;
+--daintree-700: #0d7291;
+--daintree-800: #145c76;
+--daintree-900: #154c64;
+--daintree-950: #041b25;
+
+
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --daintree-50: #ecfeff;
+--daintree-100: #cff9fe;
+--daintree-200: #a4f2fd;
+--daintree-300: #66e6fa;
+--daintree-400: #20d0f0;
+--daintree-500: #04b3d6;
+--daintree-600: #068fb4;
+--daintree-700: #0d7291;
+--daintree-800: #145c76;
+--daintree-900: #154c64;
+--daintree-950: #041b25;
+
+
   }
 }
 
