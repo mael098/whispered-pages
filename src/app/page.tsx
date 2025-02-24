@@ -21,9 +21,9 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-secondary overflow-x-hidden">
+    <div className="min-h-screen  bg-gradient-to-bl] from-indigo-700 via-sky-700 to-blue-950 to-75%  overflow-x-hidden">
       {/* Hero Section */}
-      <div className="container mx-auto px-4 pt-20 pb-32 relative">
+      <div className="container mx-auto px-4 pt-20 pb-32  relative">
         <div className="text-center max-w-3xl mx-auto animate slide-up">
           <h1 className="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80 mb-6">
             Descubre Mundos a Través de la Lectura
@@ -32,10 +32,10 @@ export default function Home() {
             Explora una biblioteca infinita de historias, conocimiento y aventuras en un solo lugar.
           </p>
           <div className="flex gap-4 justify-center">
-            <Button size="lg" className="gap-2">
+            <Button size="lg" className="gap-2 bg-primary text-white hover:bg-primary-dark">
               Comenzar Ahora <ArrowRight className="w-4 h-4" />
             </Button>
-            <Button size="lg" variant="outline">
+            <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary-light">
               Explorar Libros
             </Button>
           </div>
@@ -68,7 +68,7 @@ export default function Home() {
       {/* Features Section */}
       <div className="bg-background py-24">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-16 animate slide-up">Por Qué Elegirnos</h2>
+          <h2 className="text-3xl font-bold text-center mb-16 animate slide-up text-primary">Por Qué Elegirnos</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <FeatureCard
               icon={<BookOpen className="w-10 h-10 text-primary" />}
@@ -94,7 +94,7 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="animate slide-right">
-              <h2 className="text-3xl font-bold mb-6">Una Nueva Forma de Leer</h2>
+              <h2 className="text-3xl font-bold mb-6 text-primary">Una Nueva Forma de Leer</h2>
               <p className="text-muted-foreground mb-6">
                 Disfruta de una experiencia de lectura inmersiva con características diseñadas para los amantes de los libros.
               </p>
@@ -128,11 +128,11 @@ export default function Home() {
       {/* CTA Section */}
       <div className="container mx-auto px-4 py-24">
         <div className="bg-card rounded-2xl p-8 md:p-12 text-center max-w-4xl mx-auto animate fade-in">
-          <h2 className="text-3xl font-bold mb-4">¿Listo para Comenzar Tu Viaje Literario?</h2>
+          <h2 className="text-3xl font-bold mb-4 text-primary">¿Listo para Comenzar Tu Viaje Literario?</h2>
           <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
             Únete a nuestra comunidad de lectores y descubre historias que transformarán tu mundo.
           </p>
-          <Button size="lg" className="gap-2">
+          <Button size="lg" className="gap-2 bg-primary text-white hover:bg-primary-dark">
             Comienza a Leer <ArrowRight className="w-4 h-4" />
           </Button>
         </div>
@@ -145,7 +145,7 @@ function FeatureCard({ icon, title, description }: { icon: React.ReactNode; titl
   return (
     <div className="p-6 rounded-xl bg-card border hover:shadow-lg transition-all duration-300 animate slide-up">
       <div className="mb-4">{icon}</div>
-      <h3 className="text-xl font-semibold mb-2">{title}</h3>
+      <h3 className="text-xl font-semibold mb-2 text-primary">{title}</h3>
       <p className="text-muted-foreground">{description}</p>
     </div>
   );
