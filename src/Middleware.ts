@@ -4,24 +4,20 @@ import { NextRequest, NextResponse } from "next/server";
 export async function middleware(req: NextRequest) {
   const cookies = req.cookies.get("token")?.value;
   if (!cookies) {
-    return NextResponse.redirect("/register/login", { status: 302 });
+    return NextResponse.redirect(new URL("/", req.url));
   }
-  try{
+  try {
     const secret = process.env.JWT_SECRET;
     if (!secret) {
       throw new Error("JWT_SECRET is not defined");
     }
     await jwtVerify(cookies, new TextEncoder().encode(secret));
-    return NextResponse.next();
+    return NextResponse.next(); // Importante para continuar si el token es válido
+  } catch {
+    return NextResponse.redirect(new URL("/register/login", req.url));
   }
-  catch {
-    return NextResponse.redirect("/register/login", { status: 302 });
-  }
-
 }
 
-const config = {
-  matcher: "/dashboard",
+export const config = {
+  matcher: ["/dashboard/"],
 };
-
-export default config;
