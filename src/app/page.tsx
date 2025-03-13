@@ -4,8 +4,13 @@ import { useEffect } from 'react';
 import { Button } from "@/components/ui/Button";
 import { Book, BookOpen, Star, BookMarked, ArrowRight } from "lucide-react";
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
+  const router = useRouter();
+  const handleButtonClick = () => {
+    router.push("/Admin");
+  };
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -32,7 +37,7 @@ export default function Home() {
             Explora una biblioteca infinita de historias, conocimiento y aventuras en un solo lugar.
           </p>
           <div className="flex gap-4 justify-center">
-            <Button size="lg" className="gap-2 bg-primary text-white hover:bg-primary-dark">
+            <Button size="lg" className="gap-2 bg-primary text-white hover:bg-primary-dark" onClick={handleButtonClick}>
               Comenzar Ahora <ArrowRight className="w-4 h-4" />
             </Button>
             <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary-light">

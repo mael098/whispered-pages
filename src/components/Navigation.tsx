@@ -3,7 +3,7 @@ import { removeToken } from '@/actions/auth'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
-export default function Navigation() {
+export default function NavigationUser() {
   const router = useRouter()
 
   const handleLogout = async () => {
