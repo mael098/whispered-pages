@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 // import { Geist, Geist_Mono } from "next/font/google";
 import {Theme } from '@radix-ui/themes'
 import "./globals.css";
+import Navigation from '@/components/Navigation'
 
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
@@ -25,13 +26,16 @@ export default function RootLayout({
       children,
     }: { children: ReactNode }) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="es" className="dark" suppressHydrationWarning>
       <body
 
       >
         <ThemeProvider   attribute="class">
         <Theme>
-        {children}
+          <Navigation />
+          <main>
+            {children}
+          </main>
         </Theme>
         </ThemeProvider>
       </body>

@@ -1,12 +1,10 @@
 /**@type {import('next')} */
 
-const nextConfig = {
+import { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
   /* config options here */
 
-  experimental: {
-    serverActions: true,
-  },
-  output: "export",
   eslint: {
     ignoreDuringBuilds: true,
   },

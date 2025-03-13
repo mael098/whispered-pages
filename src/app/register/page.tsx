@@ -1,6 +1,6 @@
 'use client'
 
-import { User } from '@/actions/auth'
+import { registerUser } from '@/actions/auth'
 import { useState } from 'react'
 
 export default function LoginPage() {
@@ -26,8 +26,7 @@ export default function LoginPage() {
             return
         }
         setError('')
-        await User({
-            username: formData.username,
+        await registerUser({
             email: formData.correo,
             password: formData.password
         })
