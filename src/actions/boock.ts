@@ -1,12 +1,14 @@
-'use server'
-import { db } from "@/lib/prisma"
+'use server';
 
-export async function librosCreate(data: { title: string, descripcion: string }) {
-  try{
-    await db.book.create({ data: { title: data.title, descripcion: data.descripcion ,} })
+import { supabase } from "@/lib/supabase";
 
-  }catch(e){
-    throw new Error(e instanceof Error ? e.message : String(e))
+
+export const DownloadBook = async (filePath:string) => {
+  const {data,error} = await supabase.storage.from('books').list(filePath);
+  if (error) {
+    console.error('Error al listar archivos:', error);
+  } else {
+    console.log('Archivos:', data);
   }
 
 }

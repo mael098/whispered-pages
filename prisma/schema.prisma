@@ -16,7 +16,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  // directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -51,7 +51,7 @@ model Book {
   id          Int          @id @default(autoincrement())
   title       String       @unique
   descripcion String
-  imagen      String
+  imagen      String?
 
   inventory   Inventory[]
   libCategories LibCategory[]
