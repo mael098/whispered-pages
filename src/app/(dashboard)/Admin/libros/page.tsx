@@ -26,7 +26,7 @@ export default function Page() {
             descripcion: descripcion.value,
             image: File
           }
-          await Bookpost(props)
+          await Bookpost(title, descripcion, File, props)
         } catch (error) {
           console.error("Error al enviar el formulario:", error)
         }
