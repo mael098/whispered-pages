@@ -5,9 +5,7 @@ import { SignJWT } from 'jose';
 import { cookies } from 'next/headers';
 import { getJwtSecretKey } from '@/lib/serverUtils';
 
-
-// Registrar usuario
-export async function registerUser(data: { email: string; password: string }) {
+export async function registerUser(data: { email: string; password: string; username: string }) {
   try {
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
@@ -16,8 +14,8 @@ export async function registerUser(data: { email: string; password: string }) {
         correo: data.email,
         password: hashedPassword,
         role: 'USER',
-        name: 'Default Name', // Add a default name or get it from data
-        alias: 'Default Alias' // Add a default alias or get it from data
+        name: data.username,
+        alias: '',
       },
     });
     return { success: true };
@@ -65,7 +63,7 @@ export async function loginUser(data: { email: string; password: string }) {
     return { success: true };
   } catch (error) {
     console.error("Error en login:", error);
-    throw error; // Re-lanzamos el error para manejarlo en el componente
+    throw error;
   }
 }
 

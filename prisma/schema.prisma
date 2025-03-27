@@ -12,27 +12,26 @@ generator client {
   binaryTargets = ["native", "debian-openssl-1.1.x"]
 }
 
-
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id         Int         @id @default(autoincrement())
-  name       String
-  correo     String      @unique
-  password   String
-  alias      String
+  id       Int    @id @default(autoincrement())
+  name     String
+  correo   String @unique
+  password String
+  alias    String
 
-  role       Role
-  inventory  Inventory[]
+  role         Role
+  inventory    Inventory[]
   publications Publication[]
-  comments   Comment[]
-  likes      LikeLib[]
+  comments     Comment[]
+  likes        LikeLib[]
+  imagen       Imagen[]
 }
-
 
 enum Role {
   ADMIN
@@ -40,69 +39,80 @@ enum Role {
 }
 
 model Inventory {
-  id      Int  @id @default(autoincrement())
-  user    User @relation(fields: [userId], references: [id])
-  userId  Int
-  lib     Book  @relation(fields: [libId], references: [id])
-  libId   Int
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+  lib    Book @relation(fields: [libId], references: [id])
+  libId  Int
 }
 
 model Book {
-  id          Int          @id @default(autoincrement())
-  title       String       @unique
+  id          Int    @id @default(autoincrement())
+  title       String @unique
   descripcion String
-  imagen      String?
+  price     Float
 
-  inventory   Inventory[]
+  inventory     Inventory[]
   libCategories LibCategory[]
-  likes       LikeLib[]
-  rankings    RankingLib[]
-	@@map("Lib")
-  Autor Autor[]
+  likes         LikeLib[]
+  rankings      RankingLib[]
+  Autor         Autor[]
+  imagen Imagen[]
+
+  @@map("Lib")
+}
+
+model Imagen {
+  id      Int    @id @default(autoincrement())
+  url     String
+  user    User?  @relation(fields: [user_id], references: [id])
+  user_id Int?   // Made optional
+  book    Book?  @relation(fields: [book_id], references: [id])
+  book_id Int?   // Made optional
+
+  @@unique([user_id, book_id])
 }
 
 model Autor {
-  id Int @id @default(autoincrement())
-  name String
+  id    Int    @id @default(autoincrement())
+  name  String
   books Book[]
 }
 
 model LikeLib {
-  user    User @relation(fields: [userId], references: [id])
-  userId  Int
-  lib     Book  @relation(fields: [libId], references: [id])
-  libId   Int
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+  lib    Book @relation(fields: [libId], references: [id])
+  libId  Int
 
-  @@unique([userId, libId]) // Evita que un usuario pueda dar "me gusta" dos veces al mismo libro
+  @@unique([userId, libId])
 }
 
 model LibCategory {
   id         Int      @id @default(autoincrement())
-  lib        Book      @relation(fields: [libId], references: [id])
+  lib        Book     @relation(fields: [libId], references: [id])
   libId      Int
   category   Category @relation(fields: [categoryId], references: [id])
   categoryId Int
 }
-
-model Category {
-  id           Int          @id @default(autoincrement())
-  name         String       @unique
+model Category  {
+  id            Int           @id @default(autoincrement())
+  name          String        @unique
   libCategories LibCategory[]
-
 }
 
 model RankingLib {
   id      Int  @id @default(autoincrement())
-  lib     Book  @relation(fields: [libId], references: [id])
+  lib     Book @relation(fields: [libId], references: [id])
   libId   Int
-  ranking Int  @default(0) // Se puede agregar validación para que no sea negativo
+  ranking Int  @default(0)
 }
 
 model Publication {
-  id       Int      @id @default(autoincrement())
+  id       Int       @id @default(autoincrement())
   title    String
   content  String
-  user     User     @relation(fields: [userId], references: [id])
+  user     User      @relation(fields: [userId], references: [id])
   userId   Int
   comments Comment[]
 }
@@ -110,8 +120,8 @@ model Publication {
 model Comment {
   id            Int         @id @default(autoincrement())
   content       String
-  user         User        @relation(fields: [userId], references: [id])
-  userId       Int
-  publication  Publication @relation(fields: [publicationId], references: [id])
+  user          User        @relation(fields: [userId], references: [id])
+  userId        Int
+  publication   Publication @relation(fields: [publicationId], references: [id])
   publicationId Int
 }

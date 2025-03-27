@@ -32,6 +32,21 @@ CREATE TABLE "Lib" (
 );
 
 -- CreateTable
+CREATE TABLE "Imagen" (
+    "user_id" INTEGER NOT NULL,
+    "book_id" INTEGER NOT NULL,
+    "url" TEXT NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "Autor" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+
+    CONSTRAINT "Autor_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "LikeLib" (
     "userId" INTEGER NOT NULL,
     "libId" INTEGER NOT NULL
@@ -83,6 +98,14 @@ CREATE TABLE "Comment" (
     CONSTRAINT "Comment_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "_AutorToBook" (
+    "A" INTEGER NOT NULL,
+    "B" INTEGER NOT NULL,
+
+    CONSTRAINT "_AutorToBook_AB_pkey" PRIMARY KEY ("A","B")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_correo_key" ON "User"("correo");
 
@@ -90,16 +113,28 @@ CREATE UNIQUE INDEX "User_correo_key" ON "User"("correo");
 CREATE UNIQUE INDEX "Lib_title_key" ON "Lib"("title");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Imagen_user_id_book_id_key" ON "Imagen"("user_id", "book_id");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "LikeLib_userId_libId_key" ON "LikeLib"("userId", "libId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Category_name_key" ON "Category"("name");
+
+-- CreateIndex
+CREATE INDEX "_AutorToBook_B_index" ON "_AutorToBook"("B");
 
 -- AddForeignKey
 ALTER TABLE "Inventory" ADD CONSTRAINT "Inventory_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Inventory" ADD CONSTRAINT "Inventory_libId_fkey" FOREIGN KEY ("libId") REFERENCES "Lib"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Imagen" ADD CONSTRAINT "Imagen_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Imagen" ADD CONSTRAINT "Imagen_book_id_fkey" FOREIGN KEY ("book_id") REFERENCES "Lib"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "LikeLib" ADD CONSTRAINT "LikeLib_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -124,3 +159,9 @@ ALTER TABLE "Comment" ADD CONSTRAINT "Comment_userId_fkey" FOREIGN KEY ("userId"
 
 -- AddForeignKey
 ALTER TABLE "Comment" ADD CONSTRAINT "Comment_publicationId_fkey" FOREIGN KEY ("publicationId") REFERENCES "Publication"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_AutorToBook" ADD CONSTRAINT "_AutorToBook_A_fkey" FOREIGN KEY ("A") REFERENCES "Autor"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_AutorToBook" ADD CONSTRAINT "_AutorToBook_B_fkey" FOREIGN KEY ("B") REFERENCES "Lib"("id") ON DELETE CASCADE ON UPDATE CASCADE;

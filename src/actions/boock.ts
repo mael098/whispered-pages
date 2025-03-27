@@ -3,18 +3,18 @@ import { supabase } from "@/lib/supabase";
 import { randomUUID } from "crypto";
 import { db } from "@/lib/prisma";
 
-export async function Bookpost(title: HTMLInputElement, descripcion: HTMLInputElement, File: File, data: { title: string; descripcion: string; image: File; }) {
+export async function Bookpost(title: string, descripcion: string, image: File, data: { title: string; descripcion: string; image: File;}) {
   if (!data.image) {
     throw new Error("No se recibió una imagen");
   }
 
-  const filePath = `uploads/${randomUUID()}-${data.image.name}`; // Nombre único
+  const filePath = `uploads/${randomUUID()}-${data.image.name}`;
 
   const { error } = await supabase.storage
-    .from("imagenesbook") 
+    .from("imagenesbook")
     .upload(filePath, data.image, {
       cacheControl: "3600",
-      upsert: true, 
+      upsert: true,
     });
 
   if (error) {
@@ -27,15 +27,22 @@ export async function Bookpost(title: HTMLInputElement, descripcion: HTMLInputEl
 
   try {
     await db.book.create({
-      data:{
-        title:data.title,
-        descripcion:data.descripcion,
-        imagen:imageUrl,
+      data: {
+        title: data.title,
+        descripcion: data.descripcion,
+        price: 0,
+        imagen: {
+          create:{
+            url:imageUrl,
+          }
+        }
       }
     });
-  } catch{
+  } catch(error){
     throw new Error(`Error al guardar en la base de datos: ${error}`);
   }
 
   return { message: "Imagen subida con éxito", imageUrl };
 }
+
+
