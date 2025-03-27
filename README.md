@@ -1,6 +1,6 @@
 # Whispered Pages Public
 
-Whispered Pages Public is a web platform where users can explore a collection of translated books and discover new literature in different languages. Built with **Next.js 14**, **TypeScript**, and **Tailwind CSS**, this project provides a seamless reading experience with a modern and user-friendly interface.
+Whispered Pages Public is a web platform where users can explore a collection of translated books and discover new literature in different languages. Built with **Next.js 15**, **TypeScript**, and **Tailwind CSS**, this project provides a seamless reading experience with a modern and user-friendly interface.
 
 ## Features
 

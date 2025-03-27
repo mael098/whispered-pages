@@ -2,6 +2,7 @@ import React from 'react'
 
 export default function page() {
   return (
-    <div>page</div>
+    <div className='flex flex-col w-full h-full'>
+    </div>
   )
 }
