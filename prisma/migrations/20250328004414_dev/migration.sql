@@ -23,19 +23,23 @@ CREATE TABLE "Inventory" (
 );
 
 -- CreateTable
-CREATE TABLE "Lib" (
+CREATE TABLE "books" (
     "id" SERIAL NOT NULL,
     "title" TEXT NOT NULL,
     "descripcion" TEXT NOT NULL,
+    "price" DOUBLE PRECISION NOT NULL,
 
-    CONSTRAINT "Lib_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "books_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Imagen" (
-    "user_id" INTEGER NOT NULL,
-    "book_id" INTEGER NOT NULL,
-    "url" TEXT NOT NULL
+    "id" SERIAL NOT NULL,
+    "url" TEXT NOT NULL,
+    "user_id" INTEGER,
+    "book_id" INTEGER,
+
+    CONSTRAINT "Imagen_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -47,18 +51,18 @@ CREATE TABLE "Autor" (
 );
 
 -- CreateTable
-CREATE TABLE "LikeLib" (
+CREATE TABLE "Likebook" (
     "userId" INTEGER NOT NULL,
     "libId" INTEGER NOT NULL
 );
 
 -- CreateTable
-CREATE TABLE "LibCategory" (
+CREATE TABLE "BookCategory" (
     "id" SERIAL NOT NULL,
     "libId" INTEGER NOT NULL,
     "categoryId" INTEGER NOT NULL,
 
-    CONSTRAINT "LibCategory_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "BookCategory_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -70,12 +74,12 @@ CREATE TABLE "Category" (
 );
 
 -- CreateTable
-CREATE TABLE "RankingLib" (
+CREATE TABLE "Rankingbook" (
     "id" SERIAL NOT NULL,
     "libId" INTEGER NOT NULL,
     "ranking" INTEGER NOT NULL DEFAULT 0,
 
-    CONSTRAINT "RankingLib_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Rankingbook_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -110,13 +114,13 @@ CREATE TABLE "_AutorToBook" (
 CREATE UNIQUE INDEX "User_correo_key" ON "User"("correo");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Lib_title_key" ON "Lib"("title");
+CREATE UNIQUE INDEX "books_title_key" ON "books"("title");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Imagen_user_id_book_id_key" ON "Imagen"("user_id", "book_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "LikeLib_userId_libId_key" ON "LikeLib"("userId", "libId");
+CREATE UNIQUE INDEX "Likebook_userId_libId_key" ON "Likebook"("userId", "libId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Category_name_key" ON "Category"("name");
@@ -128,28 +132,28 @@ CREATE INDEX "_AutorToBook_B_index" ON "_AutorToBook"("B");
 ALTER TABLE "Inventory" ADD CONSTRAINT "Inventory_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Inventory" ADD CONSTRAINT "Inventory_libId_fkey" FOREIGN KEY ("libId") REFERENCES "Lib"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Inventory" ADD CONSTRAINT "Inventory_libId_fkey" FOREIGN KEY ("libId") REFERENCES "books"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Imagen" ADD CONSTRAINT "Imagen_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Imagen" ADD CONSTRAINT "Imagen_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Imagen" ADD CONSTRAINT "Imagen_book_id_fkey" FOREIGN KEY ("book_id") REFERENCES "Lib"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Imagen" ADD CONSTRAINT "Imagen_book_id_fkey" FOREIGN KEY ("book_id") REFERENCES "books"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "LikeLib" ADD CONSTRAINT "LikeLib_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Likebook" ADD CONSTRAINT "Likebook_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "LikeLib" ADD CONSTRAINT "LikeLib_libId_fkey" FOREIGN KEY ("libId") REFERENCES "Lib"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Likebook" ADD CONSTRAINT "Likebook_libId_fkey" FOREIGN KEY ("libId") REFERENCES "books"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "LibCategory" ADD CONSTRAINT "LibCategory_libId_fkey" FOREIGN KEY ("libId") REFERENCES "Lib"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "BookCategory" ADD CONSTRAINT "BookCategory_libId_fkey" FOREIGN KEY ("libId") REFERENCES "books"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "LibCategory" ADD CONSTRAINT "LibCategory_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "BookCategory" ADD CONSTRAINT "BookCategory_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "RankingLib" ADD CONSTRAINT "RankingLib_libId_fkey" FOREIGN KEY ("libId") REFERENCES "Lib"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Rankingbook" ADD CONSTRAINT "Rankingbook_libId_fkey" FOREIGN KEY ("libId") REFERENCES "books"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Publication" ADD CONSTRAINT "Publication_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -164,4 +168,4 @@ ALTER TABLE "Comment" ADD CONSTRAINT "Comment_publicationId_fkey" FOREIGN KEY ("
 ALTER TABLE "_AutorToBook" ADD CONSTRAINT "_AutorToBook_A_fkey" FOREIGN KEY ("A") REFERENCES "Autor"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_AutorToBook" ADD CONSTRAINT "_AutorToBook_B_fkey" FOREIGN KEY ("B") REFERENCES "Lib"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_AutorToBook" ADD CONSTRAINT "_AutorToBook_B_fkey" FOREIGN KEY ("B") REFERENCES "books"("id") ON DELETE CASCADE ON UPDATE CASCADE;

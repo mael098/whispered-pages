@@ -29,7 +29,7 @@ model User {
   inventory    Inventory[]
   publications Publication[]
   comments     Comment[]
-  likes        LikeLib[]
+  likes        Likebook[]
   imagen       Imagen[]
 }
 
@@ -53,13 +53,13 @@ model Book {
   price     Float
 
   inventory     Inventory[]
-  libCategories LibCategory[]
-  likes         LikeLib[]
-  rankings      RankingLib[]
+  libCategories BookCategory[]
+  likes         Likebook[]
+  rankings      Rankingbook[]
   Autor         Autor[]
   imagen Imagen[]
 
-  @@map("Lib")
+  @@map("books")
 }
 
 model Imagen {
@@ -79,7 +79,7 @@ model Autor {
   books Book[]
 }
 
-model LikeLib {
+model Likebook {
   user   User @relation(fields: [userId], references: [id])
   userId Int
   lib    Book @relation(fields: [libId], references: [id])
@@ -88,7 +88,7 @@ model LikeLib {
   @@unique([userId, libId])
 }
 
-model LibCategory {
+model BookCategory {
   id         Int      @id @default(autoincrement())
   lib        Book     @relation(fields: [libId], references: [id])
   libId      Int
@@ -98,10 +98,10 @@ model LibCategory {
 model Category  {
   id            Int           @id @default(autoincrement())
   name          String        @unique
-  libCategories LibCategory[]
+  libCategories BookCategory[]
 }
 
-model RankingLib {
+model Rankingbook {
   id      Int  @id @default(autoincrement())
   lib     Book @relation(fields: [libId], references: [id])
   libId   Int
