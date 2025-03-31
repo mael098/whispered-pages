@@ -1,6 +1,6 @@
 "use client"
 
-import { Bookpost } from "@/actions/boock" /**server action */
+import { Bookpost } from "@/actions/boock"
 import type React from "react"
 import { useState } from "react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
