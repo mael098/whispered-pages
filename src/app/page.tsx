@@ -4,6 +4,8 @@ import type React from "react"
 
 import { useEffect, useState, useRef } from "react"
 import { Button } from "@/components/ui/Button"
+import { SearchBar } from "@/components/SearchBar"
+import { BookCard } from "@/components/BookCard"
 import { Book, BookOpen, Star, BookMarked, ArrowRight, Sparkles, BookText, Bookmark } from "lucide-react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
@@ -93,11 +95,38 @@ export default function Home() {
               Descubre Mundos a Través de la Lectura
             </h1>
 
-            <p className="text-xl text-indigo-100/80 mb-10 max-w-2xl mx-auto">
+            <p className="text-xl text-indigo-100/80 mb-8 max-w-2xl mx-auto">
               Explora una biblioteca infinita de historias, conocimiento y aventuras en un solo lugar.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            {/* Barra de búsqueda */}
+            <div className="mb-8">
+              <SearchBar />
+            </div>
+
+            {/* Sección de libros destacados */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
+              <BookCard
+                title="El Señor de los Anillos"
+                author="J.R.R. Tolkien"
+                coverImage="/books/lotr.jpg"
+                rating={4.8}
+              />
+              <BookCard
+                title="1984"
+                author="George Orwell"
+                coverImage="/books/1984.jpg"
+                rating={4.5}
+              />
+              <BookCard
+                title="Cien Años de Soledad"
+                author="Gabriel García Márquez"
+                coverImage="/books/100years.jpg"
+                rating={4.9}
+              />
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mt-12">
               <Button
                 onClick={handleButtonClick}
                 className="relative group overflow-hidden rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 text-lg hover:shadow-[0_0_25px_rgba(99,102,241,0.5)] transition-all duration-300"
@@ -136,9 +165,15 @@ export default function Home() {
                     />
                     <div className="book-overlay">
                       <h3 className="text-xl font-bold">{book.title}</h3>
-                      <Button className="mt-4 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-full px-4 py-2 text-sm hover:bg-white/20 transition-all">
-                        Ver más
-                      </Button>
+                      <div className="flex flex-col gap-2">
+                        <Button variant="outline" className="bg-indigo-600 hover:bg-indigo-700 text-white">
+                          <ArrowRight className="w-4 h-4 mr-2" />
+                          Explorar Biblioteca
+                        </Button>
+                        <Button variant="outline" className="bg-indigo-600/10 hover:bg-indigo-700/20 text-white">
+                          Ver más
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>

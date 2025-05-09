@@ -39,6 +39,12 @@ export function Sidebar({ className }: React.HTMLAttributes<HTMLDivElement>) {
       active: pathname === "/admin/users",
     },
     {
+      href: "Admin/publicacion",
+      label: "Publications",
+      icon: BookText,
+      active: pathname === "Admin/publicacion",
+    },
+    {
       href: "/admin/settings",
       label: "Settings",
       icon: Settings,
