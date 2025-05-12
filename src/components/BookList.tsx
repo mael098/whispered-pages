@@ -12,14 +12,64 @@ interface BookListProps {
   title: string
   onAddToLibrary?: (book: Book) => void
   onRemoveFromLibrary?: (book: Book) => void
+  searchTerm?: string
+  filters?: {
+    category?: string
+    language?: string
+    rating?: string
+    sortBy?: string
+  }
 }
 
-export function BookList({ books, title, onAddToLibrary }: BookListProps) {
+export function BookList({ books, title, onAddToLibrary, searchTerm, filters }: BookListProps) {
   const [currentPage, setCurrentPage] = useState(0)
   const booksPerPage = 6
-  const totalPages = Math.ceil(books.length / booksPerPage)
 
-  const currentBooks = books.slice(
+  // Filtrar libros según los criterios
+  const filteredBooks = books.filter((book) => {
+    // Filtrar por término de búsqueda
+    const matchesSearch = searchTerm
+      ? book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        book.author.toLowerCase().includes(searchTerm.toLowerCase())
+      : true
+
+    // Filtrar por categoría
+    const matchesCategory = !filters?.category || book.category === filters.category
+
+    // Filtrar por idioma
+    const matchesLanguage = !filters?.language || book.language === filters.language
+
+    // Filtrar por calificación
+    const matchesRating = !filters?.rating ||
+      (filters.rating === "5" ? (book.rating ?? 0) === 5 :
+       filters.rating === "4" ? (book.rating ?? 0) >= 4 :
+       (book.rating ?? 0) >= 3)
+
+    return matchesSearch && matchesCategory && matchesLanguage && matchesRating
+  })
+
+  const totalPages = Math.ceil(filteredBooks.length / booksPerPage)
+
+  // Ordenar libros según el criterio seleccionado
+  const sortedBooks = [...filteredBooks].sort((a, b) => {
+    if (!filters?.sortBy) return 0
+
+    switch (filters.sortBy) {
+      case "title":
+        return a.title.localeCompare(b.title)
+      case "author":
+        return a.author.localeCompare(b.author)
+      case "rating":
+        return (b.rating ?? 0) - (a.rating ?? 0)
+      case "date":
+        if (!a.publicationDate || !b.publicationDate) return 0
+        return new Date(b.publicationDate).getTime() - new Date(a.publicationDate).getTime()
+      default:
+        return 0
+    }
+  })
+
+  const currentBooks = sortedBooks.slice(
     currentPage * booksPerPage,
     (currentPage + 1) * booksPerPage
   )

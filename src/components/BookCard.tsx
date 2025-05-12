@@ -9,6 +9,9 @@ interface BookCardProps {
   author: string
   coverImage: string
   rating?: number
+  category?: string
+  language?: string
+  publicationDate?: string
   onAddToLibrary?: () => void
 }
 
@@ -34,13 +37,13 @@ export function BookCard({ title, author, coverImage, rating, onAddToLibrary }: 
         <p className="text-sm text-indigo-200 mb-2">{author}</p>
 
         {/* Rating */}
-        {rating && (
+        {(rating ?? 0) > 0 && (
           <div className="flex items-center gap-1 mb-2">
             {Array.from({ length: 5 }).map((_, i) => (
               <Star
                 key={i}
                 className={`w-4 h-4 ${
-                  i < rating ? "text-yellow-400" : "text-yellow-400/20"
+                  i < (rating ?? 0) ? "text-yellow-400" : "text-yellow-400/20"
                 }`}
               />
             ))}

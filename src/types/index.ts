@@ -4,6 +4,8 @@ export interface Book {
   author: string
   coverImage: string
   rating?: number
-  category: string
-  addedAt: string
+  category?: string
+  language?: string
+  publicationDate?: string
+  addedAt?: string
 }

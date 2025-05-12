@@ -46,3 +46,15 @@ export async function Bookpost(title: string, descripcion: string, image: File, 
 }
 
 
+export async function getBooks() {
+  try {
+    const books = await db.book.findMany({
+      include: {
+        imagen: true,
+      },
+    });
+    return books;
+  } catch (error) {
+    throw new Error(`Error al obtener los libros: ${error}`);
+  }
+}
