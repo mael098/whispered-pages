@@ -109,19 +109,19 @@ export default function Home() {
               <BookCard
                 title="El Señor de los Anillos"
                 author="J.R.R. Tolkien"
-                coverImage="/books/lotr.jpg"
+                coverImage="https://i.pinimg.com/736x/36/b1/b6/36b1b62cd8580ffcf3dd351d3d15c237.jpg"
                 rating={4.8}
               />
               <BookCard
                 title="1984"
                 author="George Orwell"
-                coverImage="/books/1984.jpg"
+                coverImage="https://i.pinimg.com/736x/88/2d/99/882d997fa46b928ce004e7f1f48c8f6d.jpg"
                 rating={4.5}
               />
               <BookCard
                 title="Cien Años de Soledad"
                 author="Gabriel García Márquez"
-                coverImage="/books/100years.jpg"
+                coverImage="https://i.pinimg.com/736x/c2/b1/f5/c2b1f556401d124fa0cccf7c9c73aa72.jpg"
                 rating={4.9}
               />
             </div>

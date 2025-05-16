@@ -136,7 +136,7 @@ export function BookFilters({ onApplyFilters }: BookFiltersProps) {
           ))}
         </SelectContent>
       </Select>
-      
+
       <Button
         onClick={applyFilters}
         className="bg-indigo-600 hover:bg-indigo-700"
