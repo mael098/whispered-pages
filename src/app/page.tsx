@@ -1,7 +1,5 @@
 "use client"
 
-import type React from "react"
-
 import { useEffect, useState, useRef } from "react"
 import { Button } from "@/components/ui/Button"
 import { SearchBar } from "@/components/SearchBar"

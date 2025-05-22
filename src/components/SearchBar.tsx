@@ -1,32 +1,24 @@
 "use client"
 
-import { SetStateAction, useState } from "react"
 import { Search } from "lucide-react"
-import { Button } from "@/components/ui/Button"
-import { Input } from "@/components/ui/Input"
 
-export function SearchBar() {
-  const [searchTerm, setSearchTerm] = useState("")
+interface SearchBarProps {
+  value: string
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  placeholder?: string
+}
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Implementar la lógica de búsqueda aquí
-    console.log("Buscando:", searchTerm)
-  }
-
+export function SearchBar({ value, onChange, placeholder = "Buscar..." }: SearchBarProps) {
   return (
-    <form onSubmit={handleSearch} className="flex gap-2 w-full max-w-md">
-      <Input
+    <div className="relative">
+      <input
         type="text"
-        placeholder="Buscar libros..."
-        value={searchTerm}
-        onChange={(e: { target: { value: SetStateAction<string> } }) => setSearchTerm(e.target.value)}
-        className="flex-1"
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        className="w-full bg-indigo-950/30 text-white placeholder-indigo-300/50 rounded-lg px-4 py-2 pl-10 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 border border-indigo-500/20"
       />
-      <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700">
-        <Search className="w-4 h-4 mr-2" />
-        Buscar
-      </Button>
-    </form>
+      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-indigo-300/50" />
+    </div>
   )
 }

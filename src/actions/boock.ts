@@ -49,12 +49,53 @@ export async function Bookpost(title: string, descripcion: string, image: File, 
 export async function getBooks() {
   try {
     const books = await db.book.findMany({
-      include: {
-        imagen: true,
+      select:{
+        title: true,
+        Autor:true
+        ,
+        descripcion: true,
+        price: true,
+        imagen: {
+          select: {
+            url: true,
+          },
+        },
       },
     });
     return books;
   } catch (error) {
     throw new Error(`Error al obtener los libros: ${error}`);
   }
+}
+
+
+export async function DeletedBook(bookId: number) {
+  try {
+    const book = await db.book.delete({
+      where: { id: bookId },
+    });
+    return book;
+  } catch (err) {
+    throw new Error(`Error al eliminar el libro: ${err}`);
+  }
+}
+
+
+
+export async function UpdateBook(bookId: number, title: string, descripcion: string, price:number){
+
+  try {
+    const book = await db.book.update({
+      where: { id: bookId},
+      data: {
+        title: title,
+        descripcion: descripcion,
+        price: price
+      }
+    })
+    return book;
+  } catch (err) {
+    throw new Error(`Error en editar el libro: ${err}`)
+  }
+
 }

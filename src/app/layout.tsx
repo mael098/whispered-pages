@@ -4,12 +4,13 @@ import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/components/Theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 import { Toaster as SonnerToaster } from '@/components/ui/sonner';
+import { LibraryProvider } from "@/contexts/LibraryContext"
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Admin Dashboard',
-  description: 'Admin dashboard for book management system',
+  title: 'Whispered Pages',
+  description: 'Tu biblioteca personal de libros',
 };
 
 export default function RootLayout({
@@ -18,18 +19,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="es" suppressHydrationWarning>
       <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-          <Toaster />
-          <SonnerToaster />
-        </ThemeProvider>
+        <LibraryProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+            <Toaster />
+            <SonnerToaster />
+          </ThemeProvider>
+        </LibraryProvider>
       </body>
     </html>
   );
