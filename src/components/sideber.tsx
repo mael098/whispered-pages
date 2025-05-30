@@ -24,13 +24,13 @@ export function Sidebar({ className }: React.HTMLAttributes<HTMLDivElement>) {
       href: "/Admin",
       label: "Dashboard",
       icon: Home,
-      active: pathname === "/admin",
+      active: pathname === "/Admin",
     },
     {
-      href: "Admin/libros",
+      href: "Admin/books",
       label: "Books",
       icon: BookText,
-      active: pathname === "/admin/books",
+      active: pathname === "Admin/books",
     },
     {
       href: "/admin/users",
@@ -38,18 +38,7 @@ export function Sidebar({ className }: React.HTMLAttributes<HTMLDivElement>) {
       icon: Users,
       active: pathname === "/admin/users",
     },
-    {
-      href: "Admin/publicacion",
-      label: "Publications",
-      icon: BookText,
-      active: pathname === "Admin/publicacion",
-    },
-    {
-      href: "/admin/settings",
-      label: "Settings",
-      icon: Settings,
-      active: pathname === "/admin/settings",
-    },
+   
   ];
 
   return (

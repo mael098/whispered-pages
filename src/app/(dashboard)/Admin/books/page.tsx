@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Plus, Pencil, Trash2, Search, Filter, Eye } from "lucide-react"
+import { Plus, Pencil, Trash2, Search,  Eye } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { BookForm } from "@/components/BookForm"
 import { toast } from "sonner"
@@ -34,7 +34,6 @@ export default function AdminBooksPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>("")
   const [showPreview, setShowPreview] = useState<any>(null)
 
-  // Cargar libros del localStorage al iniciar
   useEffect(() => {
     const savedBooks = localStorage.getItem("admin-books")
     if (savedBooks) {
@@ -42,12 +41,10 @@ export default function AdminBooksPage() {
     }
   }, [])
 
-  // Guardar libros en localStorage cuando cambian
   useEffect(() => {
     localStorage.setItem("admin-books", JSON.stringify(books))
   }, [books])
 
-  // Obtener todas las categorías únicas
   const allCategories = Array.from(
     new Set(books.flatMap(book => book.categories))
   )
@@ -71,7 +68,7 @@ export default function AdminBooksPage() {
 
   const handleSubmit = (data: any) => {
     if (editingBook) {
-      setBooks(books.map(book => 
+      setBooks(books.map(book =>
         book.id === editingBook.id ? { ...data, id: book.id } : book
       ))
       toast.success("Libro actualizado correctamente")
@@ -88,7 +85,7 @@ export default function AdminBooksPage() {
 
   const filteredBooks = books.filter(book => {
     const matchesSearch = book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         book.author.toLowerCase().includes(searchQuery.toLowerCase())
+      book.author.toLowerCase().includes(searchQuery.toLowerCase())
     const matchesCategory = !selectedCategory || book.categories.includes(selectedCategory)
     return matchesSearch && matchesCategory
   })
@@ -186,11 +183,10 @@ export default function AdminBooksPage() {
             <Button
               variant="outline"
               onClick={() => setSelectedCategory("")}
-              className={`${
-                !selectedCategory
+              className={`${!selectedCategory
                   ? "bg-indigo-600 text-white"
                   : "bg-indigo-600/20 text-indigo-300"
-              }`}
+                }`}
             >
               Todos
             </Button>
@@ -199,11 +195,10 @@ export default function AdminBooksPage() {
                 key={category}
                 variant="outline"
                 onClick={() => setSelectedCategory(category)}
-                className={`${
-                  selectedCategory === category
+                className={`${selectedCategory === category
                     ? "bg-indigo-600 text-white"
                     : "bg-indigo-600/20 text-indigo-300"
-                }`}
+                  }`}
               >
                 {category}
               </Button>

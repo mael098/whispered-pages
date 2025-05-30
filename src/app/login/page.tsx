@@ -43,4 +43,4 @@ export default function LoginPage() {
       </button>
     </form>
   )
-} 
+}
