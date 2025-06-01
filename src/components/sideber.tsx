@@ -4,7 +4,6 @@ import { cn } from "@/lib/utilis";
 import {
   BookText,
   Users,
-  Settings,
   Home,
   Menu,
   X

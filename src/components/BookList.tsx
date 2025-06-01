@@ -42,8 +42,8 @@ export function BookList({ books, title, onAddToLibrary, searchTerm, filters }: 
     // Filtrar por calificación
     const matchesRating = !filters?.rating ||
       (filters.rating === "5" ? (book.rating ?? 0) === 5 :
-       filters.rating === "4" ? (book.rating ?? 0) >= 4 :
-       (book.rating ?? 0) >= 3)
+      filters.rating === "4" ? (book.rating ?? 0) >= 4 :
+      (book.rating ?? 0) >= 3)
 
     return matchesSearch && matchesCategory && matchesLanguage && matchesRating
   })

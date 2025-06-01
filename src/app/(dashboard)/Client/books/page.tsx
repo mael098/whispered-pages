@@ -1,62 +1,86 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { BookDetailCard } from "@/components/BookDetailCard"
 import { SearchBar } from "@/components/SearchBar"
 import { Filter, SlidersHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/Button"
+import { getBooks } from "@/actions/boock"
+import { toast } from "sonner"
 
-// Datos de ejemplo - Esto debería venir de tu base de datos
-const sampleBooks = [
-  {
-    id: 1,
-    title: "El Señor de los Anillos",
-    author: "J.R.R. Tolkien",
-    coverImage: "https://i.pinimg.com/736x/36/b1/b6/36b1b62cd8580ffcf3dd351d3d15c237.jpg",
-    rating: 4.8,
-    publishDate: "1954",
-    description: "Una épica historia de fantasía que sigue las aventuras de Frodo Bolsón y la Comunidad del Anillo en su misión para destruir el Anillo Único.",
-    categories: ["Fantasía", "Aventura", "Clásico"],
-  },
-  {
-    id: 2,
-    title: "1984",
-    author: "George Orwell",
-    coverImage: "https://i.pinimg.com/736x/88/2d/99/882d997fa46b928ce004e7f1f48c8f6d.jpg",
-    rating: 4.5,
-    publishDate: "1949",
-    description: "Una distopía que presenta una sociedad totalitaria donde el pensamiento individual es un crimen y la vigilancia es constante.",
-    categories: ["Distopía", "Ciencia Ficción", "Política"],
-  },
-  {
-    id: 3,
-    title: "Cien Años de Soledad",
-    author: "Gabriel García Márquez",
-    coverImage: "https://i.pinimg.com/736x/c2/b1/f5/c2b1f556401d124fa0cccf7c9c73aa72.jpg",
-    rating: 4.9,
-    publishDate: "1967",
-    description: "La historia de la familia Buendía a lo largo de siete generaciones en el pueblo ficticio de Macondo.",
-    categories: ["Realismo Mágico", "Literatura Latinoamericana"],
-  },
-]
+interface Book {
+  id: number
+  title: string
+  descripcion: string
+  price: number
+  Autor: {
+    id: number
+    name: string
+  }[]
+  imagen: {
+    id: number
+    url: string
+  }[]
+  libCategories: {
+    category: {
+      id: number
+      name: string
+    }
+  }[]
+}
 
 export default function BooksPage() {
   const router = useRouter()
   const [showFilters, setShowFilters] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
+  const [books, setBooks] = useState<Book[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const categories = Array.from(new Set(sampleBooks.flatMap(book => book.categories)))
+  useEffect(() => {
+    const loadBooks = async () => {
+      try {
+        const fetchedBooks = await getBooks()
+        setBooks(fetchedBooks)
+      } catch (error) {
+        toast.error("Error al cargar los libros")
+        console.error(error)
+      } finally {
+        setLoading(false)
+      }
+    }
 
-  const filteredBooks = sampleBooks.filter(book => {
-    const matchesCategory = !selectedCategory || book.categories.includes(selectedCategory)
-    const matchesSearch = !searchQuery || 
+    loadBooks()
+  }, [])
+
+  // Obtener todas las categorías únicas de los libros
+  const categories = Array.from(
+    new Set(books.flatMap(book => book.libCategories.map(cat => cat.category.name)))
+  )
+
+  const filteredBooks = books.filter(book => {
+    const matchesCategory = !selectedCategory ||
+      book.libCategories.some(cat => cat.category.name === selectedCategory)
+
+    const matchesSearch = !searchQuery ||
       book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      book.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      book.description.toLowerCase().includes(searchQuery.toLowerCase())
+      book.Autor[0]?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      book.descripcion.toLowerCase().includes(searchQuery.toLowerCase())
+
     return matchesCategory && matchesSearch
   })
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0a0a18] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mx-auto"></div>
+          <p className="text-white mt-4">Cargando libros...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-[#0a0a18] py-8">
@@ -71,7 +95,11 @@ export default function BooksPage() {
         <div className="mb-8 space-y-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
-              <SearchBar onSearch={setSearchQuery} />
+              <SearchBar
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Buscar libros..."
+              />
             </div>
             <Button
               onClick={() => setShowFilters(!showFilters)}
@@ -125,12 +153,12 @@ export default function BooksPage() {
             <BookDetailCard
               key={book.id}
               title={book.title}
-              author={book.author}
-              coverImage={book.coverImage}
-              rating={book.rating}
-              publishDate={book.publishDate}
-              description={book.description}
-              categories={book.categories}
+              author={book.Autor[0]?.name || ""}
+              coverImage={book.imagen[0]?.url || ""}
+              rating={0}
+              publishDate={new Date().toLocaleDateString()}
+              description={book.descripcion}
+              categories={book.libCategories.map(cat => cat.category.name)}
               onReadMore={() => router.push(`/Client/books/${book.id}`)}
             />
           ))}

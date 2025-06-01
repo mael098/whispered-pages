@@ -1,52 +1,68 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Plus, Pencil, Trash2, Search,  Eye } from "lucide-react"
+import { Plus, Pencil, Trash2, Search, Eye } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { BookForm } from "@/components/BookForm"
 import { toast } from "sonner"
+import Image from "next/image"
+import { getBooks, DeletedBook, UpdateBook, Bookpost } from "@/actions/boock"
 
-// Datos de ejemplo - Esto debería venir de tu base de datos
-const sampleBooks = [
-  {
-    id: 1,
-    title: "El Señor de los Anillos",
-    author: "J.R.R. Tolkien",
-    coverImage: "https://i.pinimg.com/736x/36/b1/b6/36b1b62cd8580ffcf3dd351d3d15c237.jpg",
-    rating: 4.8,
-    publishDate: "1954",
-    description: "Una épica historia de fantasía que sigue las aventuras de Frodo Bolsón y la Comunidad del Anillo en su misión para destruir el Anillo Único.",
-    categories: ["Fantasía", "Aventura", "Clásico"],
-    fullDescription: "El Señor de los Anillos es una novela de fantasía épica...",
-    content: "Capítulo 1: Una Reunión Esperada...",
-    pages: 1178,
-    language: "Español",
-    publisher: "Minotauro",
-    isbn: "978-84-450-7179-3",
-  },
-]
+interface Book {
+  id: number
+  title: string
+  descripcion: string
+  price: number
+  Autor: {
+    id: number
+    name: string
+  }[]
+  imagen: {
+    id: number
+    url: string
+  }[]
+  libCategories: {
+    category: {
+      id: number
+      name: string
+    }
+  }[]
+}
+
+interface BookFormData {
+  title: string
+  descripcion: string
+  image: File
+  author: string
+  price: number
+  categories: string[]
+}
 
 export default function AdminBooksPage() {
-  const [books, setBooks] = useState(sampleBooks)
+  const [books, setBooks] = useState<Book[]>([])
   const [showForm, setShowForm] = useState(false)
-  const [editingBook, setEditingBook] = useState<any>(null)
+  const [editingBook, setEditingBook] = useState<Book | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<string>("")
-  const [showPreview, setShowPreview] = useState<any>(null)
+  const [showPreview, setShowPreview] = useState<Book | null>(null)
 
   useEffect(() => {
-    const savedBooks = localStorage.getItem("admin-books")
-    if (savedBooks) {
-      setBooks(JSON.parse(savedBooks))
-    }
+    loadBooks()
   }, [])
 
-  useEffect(() => {
-    localStorage.setItem("admin-books", JSON.stringify(books))
-  }, [books])
+  const loadBooks = async () => {
+    try {
+      const fetchedBooks = await getBooks()
+      setBooks(fetchedBooks as Book[])
+    } catch (error) {
+      toast.error("Error al cargar los libros")
+    }
+  }
 
   const allCategories = Array.from(
-    new Set(books.flatMap(book => book.categories))
+    new Set(books.flatMap(book => 
+      book.libCategories?.map(cat => cat.category.name) || []
+    ))
   )
 
   const handleAddBook = () => {
@@ -54,39 +70,54 @@ export default function AdminBooksPage() {
     setShowForm(true)
   }
 
-  const handleEditBook = (book: any) => {
+  const handleEditBook = (book: Book) => {
     setEditingBook(book)
     setShowForm(true)
   }
 
-  const handleDeleteBook = (bookId: number) => {
+  const handleDeleteBook = async (bookId: number) => {
     if (window.confirm("¿Estás seguro de que quieres eliminar este libro?")) {
-      setBooks(books.filter(book => book.id !== bookId))
-      toast.success("Libro eliminado correctamente")
+      try {
+        await DeletedBook(bookId)
+        await loadBooks()
+        toast.success("Libro eliminado correctamente")
+      } catch (error) {
+        toast.error("Error al eliminar el libro")
+      }
     }
   }
 
-  const handleSubmit = (data: any) => {
-    if (editingBook) {
-      setBooks(books.map(book =>
-        book.id === editingBook.id ? { ...data, id: book.id } : book
-      ))
-      toast.success("Libro actualizado correctamente")
-    } else {
-      const newBook = {
-        ...data,
-        id: Math.max(...books.map(b => b.id), 0) + 1
+  const handleSubmit = async (data: BookFormData) => {
+    try {
+      if (editingBook) {
+        await UpdateBook(editingBook.id, data.title, data.descripcion, data.price)
+        toast.success("Libro actualizado correctamente")
+      } else {
+        await Bookpost(data.title, data.descripcion, data.image, {
+          ...data,
+          rating: 0,
+          publishDate: new Date().toISOString(),
+          fullDescription: data.descripcion,
+          content: "",
+          pages: 0,
+          language: "Español",
+          publisher: "",
+          isbn: ""
+        })
+        toast.success("Libro añadido correctamente")
       }
-      setBooks([...books, newBook])
-      toast.success("Libro añadido correctamente")
+      await loadBooks()
+      setShowForm(false)
+    } catch (error) {
+      toast.error("Error al guardar el libro")
     }
-    setShowForm(false)
   }
 
   const filteredBooks = books.filter(book => {
     const matchesSearch = book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      book.author.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesCategory = !selectedCategory || book.categories.includes(selectedCategory)
+      book.Autor[0]?.name.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesCategory = !selectedCategory || 
+      book.libCategories?.some(cat => cat.category.name === selectedCategory)
     return matchesSearch && matchesCategory
   })
 
@@ -98,7 +129,22 @@ export default function AdminBooksPage() {
             {editingBook ? "Editar Libro" : "Añadir Nuevo Libro"}
           </h1>
           <BookForm
-            initialData={editingBook}
+            initialData={editingBook ? {
+              id: editingBook.id,
+              title: editingBook.title,
+              author: editingBook.Autor[0]?.name || "",
+              coverImage: editingBook.imagen[0]?.url || "",
+              rating: 0,
+              publishDate: new Date().toISOString(),
+              categories: editingBook.libCategories?.map(cat => cat.category.name) || [],
+              description: editingBook.descripcion,
+              fullDescription: editingBook.descripcion,
+              content: "",
+              pages: 0,
+              language: "Español",
+              publisher: "",
+              isbn: ""
+            } : undefined}
             onSubmit={handleSubmit}
             onCancel={() => setShowForm(false)}
           />
@@ -123,27 +169,29 @@ export default function AdminBooksPage() {
           <div className="bg-indigo-600/20 border border-indigo-500/20 rounded-lg p-8">
             <div className="grid md:grid-cols-3 gap-8">
               <div className="md:col-span-1">
-                <img
-                  src={showPreview.coverImage}
+                <Image
+                  width={256}
+                  height={384}
+                  src={showPreview.imagen[0]?.url || ""}
                   alt={showPreview.title}
                   className="w-full aspect-[2/3] object-cover rounded-lg"
                 />
               </div>
               <div className="md:col-span-2 space-y-4">
                 <h2 className="text-2xl font-bold text-white">{showPreview.title}</h2>
-                <p className="text-indigo-300">{showPreview.author}</p>
+                <p className="text-indigo-300">{showPreview.Autor[0]?.name}</p>
                 <div className="flex flex-wrap gap-2">
-                  {showPreview.categories.map((category: string, index: number) => (
+                  {showPreview.libCategories?.map((cat, index) => (
                     <span
                       key={index}
                       className="px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300"
                     >
-                      {category}
+                      {cat.category.name}
                     </span>
                   ))}
                 </div>
                 <div className="prose prose-invert">
-                  <p>{showPreview.description}</p>
+                  <p>{showPreview.descripcion}</p>
                 </div>
               </div>
             </div>
@@ -214,21 +262,23 @@ export default function AdminBooksPage() {
               className="bg-indigo-600/20 border border-indigo-500/20 rounded-lg p-4 flex items-center justify-between"
             >
               <div className="flex items-center gap-4">
-                <img
-                  src={book.coverImage}
+                <Image
+                  width={64}
+                  height={96}
+                  src={book.imagen[0]?.url || ""}
                   alt={book.title}
                   className="w-16 h-24 object-cover rounded-lg"
                 />
                 <div>
                   <h3 className="text-lg font-semibold text-white">{book.title}</h3>
-                  <p className="text-indigo-300">{book.author}</p>
+                  <p className="text-indigo-300">{book.Autor[0]?.name}</p>
                   <div className="flex gap-2 mt-2">
-                    {book.categories.map((category, index) => (
+                    {book.libCategories?.map((cat, index) => (
                       <span
                         key={index}
                         className="text-xs px-2 py-1 rounded-full bg-indigo-500/20 text-indigo-300"
                       >
-                        {category}
+                        {cat.category.name}
                       </span>
                     ))}
                   </div>

@@ -4,6 +4,8 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/Button"
 import { toast } from "sonner"
 import { Upload, X } from "lucide-react"
+import Image from "next/image"
+import { Bookpost } from "@/actions/boock"
 
 interface BookFormProps {
   initialData?: {
@@ -51,16 +53,46 @@ export function BookForm({ initialData, onSubmit, onCancel }: BookFormProps) {
     }
   }, [initialData])
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
     // Validación básica
     if (!formData.title || !formData.author || !formData.coverImage) {
       toast.error("Por favor completa los campos requeridos")
       return
     }
 
-    onSubmit(formData)
+    try {
+      // Convertir la imagen base64 a File
+      const imageFile = await fetch(formData.coverImage)
+        .then(res => res.blob())
+        .then(blob => new File([blob], "cover.jpg", { type: "image/jpeg" }))
+
+      const result = await Bookpost(
+        formData.title,
+        formData.description,
+        imageFile,
+        {
+          title: formData.title,
+          descripcion: formData.description,
+          image: imageFile,
+          author: formData.author,
+          rating: formData.rating,
+          publishDate: formData.publishDate,
+          categories: formData.categories,
+          fullDescription: formData.fullDescription,
+          content: formData.content,
+          pages: formData.pages,
+          language: formData.language,
+          publisher: formData.publisher,
+          isbn: formData.isbn
+        }
+      )
+
+      toast.success("Libro creado exitosamente")
+      onSubmit(formData)
+    } catch (error) {
+      toast.error("Error al crear el libro: " + (error as Error).message)
+    }
   }
 
   const handleAddCategory = () => {
@@ -134,7 +166,9 @@ export function BookForm({ initialData, onSubmit, onCancel }: BookFormProps) {
             <div className="flex items-center gap-4">
               {formData.coverImage && (
                 <div className="relative w-24 h-36">
-                  <img
+                  <Image
+                    width={96}
+                    height={144}
                     src={formData.coverImage}
                     alt="Portada"
                     className="w-full h-full object-cover rounded-lg"
